@@ -1,125 +1,386 @@
-import 'package:flutter/material.dart';
+import 'dart:ui';
 
-void main() {
-  runApp(const MyApp());
-}
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'dart:async';
+
+import 'package:pulsator/pulsator.dart';
+
+void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      debugShowCheckedModeBanner: false,
+      title: 'Custom Progress Indicator',
       theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // TRY THIS: Try running your application with "flutter run". You'll see
-        // the application has a purple toolbar. Then, without quitting the app,
-        // try changing the seedColor in the colorScheme below to Colors.green
-        // and then invoke "hot reload" (save your changes or press the "hot
-        // reload" button in a Flutter-supported IDE, or press "r" if you used
-        // the command line to start the app).
-        //
-        // Notice that the counter didn't reset back to zero; the application
-        // state is not lost during the reload. To reset the state, use hot
-        // restart instead.
-        //
-        // This works for code too, not just values: Most code changes can be
-        // tested with just a hot reload.
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
+        primarySwatch: Colors.blue,
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: LoadingScreen(),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
-  final String title;
-
+class LoadingScreen extends StatefulWidget {
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  _LoadingScreenState createState() => _LoadingScreenState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+class _LoadingScreenState extends State<LoadingScreen>
+    with TickerProviderStateMixin {
+  late AnimationController _animationController;
 
-  void _incrementCounter() {
+  bool isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _animationController = AnimationController(
+      vsync: this,
+      duration: Duration(seconds: 5),
+    )..repeat();
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
+
+  void loadData() {
     setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
+      isLoading = true;
+    });
+
+    // Simulate loading data
+    Timer(const Duration(seconds: 3), () {
+      setState(() {
+        isLoading = false;
+      });
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
     return Scaffold(
-      appBar: AppBar(
-        // TRY THIS: Try changing the color here to a specific color (to
-        // Colors.amber, perhaps?) and trigger a hot reload to see the AppBar
-        // change color while the other colors stay the same.
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
-      ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          //
-          // TRY THIS: Invoke "debug painting" (choose the "Toggle Debug Paint"
-          // action in the IDE, or press "p" in the console), to see the
-          // wireframe for each widget.
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-          ],
+        backgroundColor: Colors.white,
+        appBar: AppBar(
+          centerTitle: true,
+          title: Row(
+            children: [
+              Text(
+                'a-',
+                style: GoogleFonts.acme(
+                  textStyle: const TextStyle(
+                      letterSpacing: 3,
+                      fontSize: 24,
+                      fontWeight: FontWeight.w400,
+                      color: Colors.brown),
+                ),
+              ),
+              const SizedBox(width: 4.0),
+              Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  border: Border.all(color: Colors.brown, width: 1.3),
+                  shape: BoxShape.circle,
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(0.3), // Reduced padding
+                  child: Stack(
+                    children: [
+                      RotationTransition(
+                        turns: _animationController,
+                        child: SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CustomPaint(
+                            painter: MoonPainter(
+                              wdth2: 0.7,
+                              hght2: 0.7,
+                              operation: (a, b) => a - b,
+                              hght: 0.7,
+                              wdth: 0.7,
+                              thickness: 0.8, // Reduced thickness
+                            ),
+                          ),
+                        ),
+                      ),
+                      RotationTransition(
+                        turns: _animationController,
+                        child: SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CustomPaint(
+                            painter: MoonPainter(
+                              operation: (a, b) => a + b,
+                              hght: 0.5,
+                              wdth: 0.5,
+                              wdth2: 0.47,
+                              hght2: 0.47,
+                              thickness: 0.8,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(width: 2.0),
+              Text(
+                'k',
+                style: GoogleFonts.acme(
+                  textStyle: TextStyle(
+                      letterSpacing: 3,
+                      fontSize: 24,
+                      fontWeight: FontWeight.w400,
+                      color: Colors.brown),
+                ),
+              ),
+            ],
+          ),
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
-    );
+        body: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  ClipRect(
+                    child: SizedBox(
+                      height: 220,
+                      width: 220,
+                      child: Pulsator(
+                        style: const PulseStyle(
+                            color: Colors.white,
+                            borderWidth: 3.0,
+                            borderColor: Colors.brown),
+                        count: 1,
+                        duration: const Duration(seconds: 8),
+                        startFromScratch: true,
+                        autoStart: true,
+                        fit: PulseFit.contain,
+                        child: Container(
+                          decoration: BoxDecoration(
+                              color: Colors.white,
+                              border: Border.all(color: Colors.brown, width: 4),
+                              shape: BoxShape.circle),
+                          child: Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: Stack(
+                              // mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                RotationTransition(
+                                  turns: _animationController,
+                                  child: SizedBox(
+                                    width: 100,
+                                    height: 100,
+                                    child: CustomPaint(
+                                      painter: MoonPainter(
+                                          wdth2: 0.7,
+                                          hght2: 0.7,
+                                          operation: (a, b) => a - b,
+                                          hght: 0.7,
+                                          wdth: 0.7,
+                                          thickness: 3),
+                                    ),
+                                  ),
+                                ),
+                                RotationTransition(
+                                  turns: _animationController,
+                                  child: SizedBox(
+                                    width: 100,
+                                    height: 100,
+                                    child: CustomPaint(
+                                      painter: MoonPainter(
+                                          operation: (a, b) => a + b,
+                                          hght: 1,
+                                          wdth: 1,
+                                          wdth2: 0.97,
+                                          hght2: 0.97,
+                                          thickness: 2),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              Text(
+                'Let’s start a Ripple of Kindness',
+                style: GoogleFonts.actor(
+                  textStyle: const TextStyle(
+                      letterSpacing: 3, fontSize: 16, color: Colors.black),
+                ),
+              ),
+              Text(
+                'Your first act of Kindness is just a Coffee away!',
+                textAlign: TextAlign.center,
+                style: GoogleFonts.actor(
+                  textStyle: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 3,
+                      fontSize: 16,
+                      color: Colors.black),
+                ),
+              ),
+            ],
+          ),
+        ));
   }
 }
+
+typedef MathOperation = double Function(double, double);
+
+class MoonPainter extends CustomPainter {
+  final double hght;
+  final double wdth;
+  final double hght2;
+  final double wdth2;
+  final double thickness;
+  final MathOperation operation;
+
+  MoonPainter({
+    required this.hght,
+    required this.wdth,
+    required this.operation,
+    required this.hght2,
+    required this.wdth2,
+    required this.thickness,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final center = Offset(size.width / 2, size.height / 2);
+    final paint = Paint()
+      ..shader = const LinearGradient(
+        begin: Alignment.topRight,
+        end: Alignment.bottomLeft,
+        colors: [
+          Colors.brown,
+          Colors.brown,
+          Colors.brown,
+          Colors.brown,
+        ],
+      ).createShader(Rect.fromLTRB(0, 0, size.width, size.height));
+
+    Path path1 = Path()
+      ..addOval(Rect.fromCenter(
+          center: center,
+          width: size.width * wdth,
+          height: size.height * hght));
+
+    Path path2 = Path()
+      ..addOval(
+        Rect.fromCenter(
+          center: Offset(
+            operation(center.dx, thickness),
+            operation(center.dx, thickness),
+          ),
+          width: size.width * wdth2,
+          height: size.height * hght2,
+        ),
+      );
+    canvas.drawPath(
+      Path.combine(PathOperation.difference, path1, path2),
+      paint,
+    );
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) {
+    return false;
+  }
+}
+
+/// A custom painter that creates a liquid-like animation using a sine wave.
+// class LiquidPainter extends CustomPainter {
+//   final double value;
+//   final double maxValue;
+//
+//   /// Creates a [LiquidPainter] with the given [value] and [maxValue].
+//   LiquidPainter(this.value, this.maxValue);
+//
+//   @override
+//   void paint(Canvas canvas, Size size) {
+//     double diameter = min(size.height, size.width);
+//     double radius = diameter / 2;
+//
+//     // Defining coordinate points. The wave starts from the bottom and ends at the top as the value changes.
+//     double pointX = 0;
+//     double pointY = diameter -
+//         ((diameter + 10) *
+//             (value /
+//                 maxValue)); // 10 is an extra offset added to fill the circle completely
+//
+//     Path path = Path();
+//     path.moveTo(pointX, pointY);
+//
+//     // Amplitude: the height of the sine wave
+//     double amplitude = 1;
+//
+//     // Period: the time taken to complete one full cycle of the sine wave.
+//     // f = 1/p, the more the value of the period, the higher the frequency.
+//     double period = value / maxValue;
+//
+//     // Phase Shift: the horizontal shift of the sine wave along the x-axis.
+//     double phaseShift = value * pi;
+//
+//     // Plotting the sine wave by connecting various paths till it reaches the diameter.
+//     // Using this formula: y = A * sin(ωt + φ) + C
+//     for (double i = 0; i <= diameter; i++) {
+//       path.lineTo(
+//         i + pointX,
+//         pointY + amplitude * sin((i * 2 * period * pi / diameter) + phaseShift),
+//       );
+//     }
+//
+//     // Plotting a vertical line which connects the right end of the sine wave.
+//     path.lineTo(pointX + diameter, diameter);
+//     // Plotting a vertical line which connects the left end of the sine wave.
+//     path.lineTo(pointX, diameter);
+//     // Closing the path.
+//     path.close();
+//
+//     Paint paint = Paint()
+//       ..shader = const SweepGradient(
+//               colors: [
+//                 Color(0xffFF7A01),
+//                 Color(0xffFF0069),
+//                 Color(0xff7639FB),
+//               ],
+//               startAngle: pi / 2,
+//               endAngle: 5 * pi / 2,
+//               tileMode: TileMode.clamp,
+//               stops: [
+//                 0.25,
+//                 0.35,
+//                 0.5,
+//               ])
+//           .createShader(Rect.fromCircle(
+//               center: Offset(diameter, diameter), radius: radius))
+//       ..style = PaintingStyle.fill;
+//
+//     // Clipping rectangular-shaped path to Oval.
+//     Path circleClip = Path()
+//       ..addOval(Rect.fromCenter(
+//           center: Offset(radius, radius), width: diameter, height: diameter));
+//     canvas.clipPath(circleClip, doAntiAlias: true);
+//     canvas.drawPath(path, paint);
+//   }
+//
+//   @override
+//   bool shouldRepaint(covariant CustomPainter oldDelegate) {
+//     return true;
+//   }
+// }
