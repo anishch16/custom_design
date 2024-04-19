@@ -13,7 +13,7 @@ class WeatherLoadingState extends WeatherState {
 }
 
 class WeatherLoadedState extends WeatherState {
-  final WeatherModel weather; // Change the type to WeatherModel
+  final WeatherModel weather;
   WeatherLoadedState(this.weather);
 
   @override

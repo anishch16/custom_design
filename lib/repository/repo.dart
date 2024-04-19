@@ -25,6 +25,7 @@ class UserRepository {
     log("Status code: ${response.statusCode}");
 
     if (response.statusCode == 200) {
+      log("Response body: ${response.body}");
       final Map<String, dynamic> result = jsonDecode(response.body);
       WeatherModel weather = WeatherModel.fromJson(result);
       return weather;
