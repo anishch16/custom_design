@@ -18,10 +18,12 @@ class HomePage extends StatelessWidget {
               ),
               body: Padding(
                 padding: const EdgeInsets.all(16.0),
-                child: Expanded(
+                child: SingleChildScrollView(
+                  physics: ScrollPhysics(),
                   child: Column(
                     children: [
                       ListView.builder(
+                        physics: NeverScrollableScrollPhysics(),
                         shrinkWrap: true,
                         scrollDirection: Axis.vertical,
                         itemCount: 10,
@@ -44,7 +46,8 @@ class HomePage extends StatelessWidget {
                               const SizedBox(height: 12),
                               Row(
                                 crossAxisAlignment: CrossAxisAlignment.center,
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   // ElevatedButton(
                                   //   onPressed: () {
@@ -69,8 +72,8 @@ class HomePage extends StatelessWidget {
                                                   .add(IncrementEvent());
                                         },
                                         child: AnimatedSwitcher(
-                                            duration:
-                                                const Duration(milliseconds: 100),
+                                            duration: const Duration(
+                                                milliseconds: 100),
                                             switchInCurve: Curves.easeInOut,
                                             switchOutCurve: Curves.easeInOut,
                                             transitionBuilder:
@@ -80,7 +83,8 @@ class HomePage extends StatelessWidget {
                                                     milliseconds: 500),
                                                 tween: Tween<double>(
                                                     begin: 0, end: 1),
-                                                builder: (context, value, child) {
+                                                builder:
+                                                    (context, value, child) {
                                                   final scaleValue = Curves
                                                       .elasticOut
                                                       .transform(value);
@@ -144,8 +148,8 @@ class HomePage extends StatelessWidget {
                                                   .add(IncrementEventDislike());
                                         },
                                         child: AnimatedSwitcher(
-                                            duration:
-                                                const Duration(milliseconds: 100),
+                                            duration: const Duration(
+                                                milliseconds: 100),
                                             switchInCurve: Curves.easeInOut,
                                             switchOutCurve: Curves.easeInOut,
                                             transitionBuilder:
@@ -155,7 +159,8 @@ class HomePage extends StatelessWidget {
                                                     milliseconds: 500),
                                                 tween: Tween<double>(
                                                     begin: 0, end: 1),
-                                                builder: (context, value, child) {
+                                                builder:
+                                                    (context, value, child) {
                                                   final scaleValue = Curves
                                                       .elasticOut
                                                       .transform(value);
@@ -169,7 +174,8 @@ class HomePage extends StatelessWidget {
                                             },
                                             child: state.dislikeBool
                                                 ? Icon(
-                                                    Icons.thumb_down_alt_rounded,
+                                                    Icons
+                                                        .thumb_down_alt_rounded,
                                                     key: ValueKey<bool>(
                                                         state.dislikeBool),
                                                     size: 32,
@@ -210,7 +216,6 @@ class HomePage extends StatelessWidget {
                                 ],
                               ),
                               const SizedBox(height: 12),
-
                             ],
                           );
                         },
