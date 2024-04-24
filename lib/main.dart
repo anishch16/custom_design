@@ -22,7 +22,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Custom Progress Indicator',
-      home: const ScreenView(),
+      home:  HomePage(),
     );
   }
 }

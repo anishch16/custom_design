@@ -7,6 +7,16 @@ import '../model/weatheer_model.dart';
 @immutable
 abstract class WeatherState extends Equatable {}
 
+
+class WeatherInitialState extends WeatherState {
+
+  @override
+  List<Object?> get props => throw UnimplementedError();
+  final WeatherModel weather;
+  // var value = "Something Useful";
+  WeatherInitialState(this.weather);
+}
+
 class WeatherLoadingState extends WeatherState {
   @override
   List<Object?> get props => [];
